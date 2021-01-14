@@ -46,12 +46,12 @@ def runFreerdp(server):
 
     for i in (cfg["config"]).split():
         arg.append(i)
-    messagebox.showinfo("123",(cfg["servers"][server]["extendedconfig"]))
     if (cfg["servers"],[server],["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]).split():
             arg.append(i)
+    print(arg)
     messagebox.showinfo("123",arg)
-    subprocess.run(arg)
+    #subprocess.run(arg)
 
 root = Tk()
 root.attributes('-fullscreen', True)
