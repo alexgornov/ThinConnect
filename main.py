@@ -26,31 +26,31 @@ def TestConnection(host,port):
     else:
         return True
 
-def show_message():
-    if TestConnection((cfg["servers"]["server1"]["ip"]),3389):
-        messagebox.showinfo("Подключение...", "Подключение к "+(cfg["servers"]["server1"]["name"]))
-        runFreerdp("server1")
-    elif TestConnection((cfg["servers"]["server2"]["ip"]),3389):
-        messagebox.showinfo("Подключение...", "Подключение к  "+(cfg["servers"]["server2"]["name"]))
-        runFreerdp("server2")
+def ConnectButton():
+    for i in (cfg["servers"]):
+        if TestConnection((cfg["servers"][i]["ip"]), 3389):
+            messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
+            RunFreerdp(i)
+            break
     else:
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
 
-def runFreerdp(server):
+def RunFreerdp(server):
     arg=["xfreerdp",
-    "/v:"+(cfg["servers"][server]["ip"]),
-    "/d:"+(cfg["domain"]),
-    "/load-balance-info:"+(cfg["servers"][server]["loadbalanceinfo"]),
-    "/u:"+login.get(),
-    "/p:"+password.get()]
+    "/v:" + (cfg["servers"][server]["ip"]),
+    "/d:" + (cfg["domain"]),
+    "/load-balance-info:" + (cfg["servers"][server]["loadbalanceinfo"]),
+    "/u:" + login.get(),
+    "/p:" + password.get()]
 
     for i in (cfg["config"]).split():
         arg.append(i)
+
     if (cfg["servers"],[server],["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]).split():
             arg.append(i)
     print(arg)
-    messagebox.showinfo("123",arg)
+    messagebox.showinfo("123", arg)
     #subprocess.run(arg)
 
 root = Tk()
@@ -71,7 +71,7 @@ loginEntry.grid(row=0,column=1, padx=5, pady=5)
 passEntry = Entry(textvariable=password,show="*")
 passEntry.grid(row=1,column=1, padx=5, pady=5)
 
-BtnConnect = Button(text="Подключиться",command=show_message)
+BtnConnect = Button(text="Подключиться",command=ConnectButton)
 BtnConnect.grid(row=2,column=1, padx=5, pady=5, sticky="e")
 
 BtnExit = Button(text="Выход", command=exit)

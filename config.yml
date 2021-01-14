@@ -3,11 +3,11 @@ config: "/cert-ignore /multimon"
 servers:
   server1:
     name: srv-rd
-    ip: 192.168.88.250
-    loadbalanceinfo: "tsv://MS Terminal Services Plugin.1.Collection1C"
+    ip: 192.168.88.251
+    loadbalanceinfo: "tsv://MS\ Terminal\ Services\ Plugin.1.Collection1C"
     extendedconfig: ""
   server2:
     name: srv-farm
     ip: 192.168.0.167
-    loadbalanceinfo: "tsv://MS Terminal Services Plugin.1.RDP"
+    loadbalanceinfo: "tsv://MS\ Terminal\ Services\ Plugin.1.RDP"
     extendedconfig: ""
