@@ -66,15 +66,15 @@ loginLabel.grid(row=0, column=0, sticky="w")
 passLabel.grid(row=1, column=0, sticky="w")
 
 loginEntry = Entry(textvariable=login)
-loginEntry.grid(row=0,column=1, padx=5, pady=5)
+loginEntry.grid(row=0, column=1, padx=5, pady=5)
 
-passEntry = Entry(textvariable=password,show="*")
-passEntry.grid(row=1,column=1, padx=5, pady=5)
+passEntry = Entry(textvariable=password, show="*")
+passEntry.grid(row=1, column=1, padx=5, pady=5)
 
-BtnConnect = Button(text="Подключиться",command=ConnectButton)
-BtnConnect.grid(row=2,column=1, padx=5, pady=5, sticky="e")
+BtnConnect = Button(text="Подключиться", command=ConnectButton)
+BtnConnect.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
 BtnExit = Button(text="Выход", command=exit)
-BtnExit.grid(row=3,column=1, padx=5, pady=5, sticky="e")
+BtnExit.grid(row=3, column=1, padx=5, pady=5, sticky="e")
 
 root.mainloop()
