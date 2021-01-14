@@ -1,7 +1,7 @@
 #############################################################################
 #
 #
-#need packet freerdp2-x11
+# need packet freerdp2-x11
 # python3-tk
 #
 #
@@ -13,10 +13,10 @@ import socket
 import yaml
 import subprocess
 
-with open("config.yml","r") as ymlfile:
+with open("config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
 
-def TestConnection(host,port):
+def TestConnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(0.01)
     try:
