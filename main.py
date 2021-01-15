@@ -54,7 +54,7 @@ def RunFreerdp(server):
     # Очищаем поля
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
-    #subprocess.run(arg)
+    subprocess.run(arg)
 
 root = Tk()
 root.attributes('-fullscreen', True)
