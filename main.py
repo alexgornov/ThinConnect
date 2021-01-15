@@ -21,6 +21,7 @@ with open("config.yml", "r") as ymlfile:
 #Get username
 username = getpass.getuser()
 
+
 def TestConnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(0.01)
@@ -31,6 +32,7 @@ def TestConnection(host, port):
     else:
         return True
 
+
 def ConnectButton():
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
@@ -39,6 +41,7 @@ def ConnectButton():
             break
     else:
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
+
 
 def RunFreerdp(server):
     arg = ["xfreerdp",
@@ -64,6 +67,7 @@ def RunFreerdp(server):
     # Run freerdp
     subprocess.run(arg)
 
+#Window
 root = Tk()
 root.attributes('-fullscreen', True)
 
