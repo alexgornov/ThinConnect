@@ -38,12 +38,12 @@ def ConnectButton():
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
 
 def RunFreerdp(server):
-    arg=["xfreerdp",
+    arg = ["xfreerdp",
     "/v:" + (cfg["servers"][server]["ip"]),
     "/d:" + (cfg["domain"]),
-    #"/load-balance-info:" + (cfg["servers"][server]["loadbalanceinfo"]),
     "/u:" + login.get(),
-    "/p:" + password.get()]
+    "/p:" + password.get()
+           ]
 
     for i in (cfg["config"]).split():
         arg.append(i)
@@ -51,9 +51,9 @@ def RunFreerdp(server):
     if (cfg["servers"][server]["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]).split():
             arg.append(i)
+
     print(arg)
     messagebox.showinfo("test", arg)
-    messagebox.showinfo("username", username)
     # Очищаем поля
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
