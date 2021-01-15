@@ -1,5 +1,7 @@
 # ConfiConnect
 
+Need freerdp2-x11, python3-tk
+
 Create a config.yml file with content:
 
 ```
