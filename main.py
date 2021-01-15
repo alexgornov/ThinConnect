@@ -46,11 +46,14 @@ def RunFreerdp(server):
     for i in (cfg["config"]).split():
         arg.append(i)
 
-    if (cfg["servers"],[server],["extendedconfig"]) != "":
+    if (cfg["servers"][server]["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]).split():
             arg.append(i)
     print(arg)
-    messagebox.showinfo("123", arg)
+    messagebox.showinfo("test", arg)
+    # Очищаем поля
+    loginEntry.delete(0, END)
+    passEntry.delete(0, END)
     #subprocess.run(arg)
 
 root = Tk()
