@@ -9,7 +9,10 @@
 
 from tkinter import *
 from tkinter import messagebox
-import socket, yaml, subprocess, getpass
+import socket
+import yaml
+import subprocess
+import getpass
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
@@ -42,7 +45,8 @@ def RunFreerdp(server):
     "/v:" + (cfg["servers"][server]["ip"]),
     "/d:" + (cfg["domain"]),
     "/u:" + login.get(),
-    "/p:" + password.get()
+    "/p:" + password.get(),
+    "/drive:USB,/media/" + username
            ]
 
     for i in (cfg["config"]):
@@ -54,9 +58,10 @@ def RunFreerdp(server):
 
     print(arg)
     messagebox.showinfo("test", arg)
-    # Очищаем поля
+    # Clear Entry
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
+    # Run freerdp
     subprocess.run(arg)
 
 root = Tk()

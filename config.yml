@@ -1,5 +1,5 @@
 domain: confi.ru
-config: {"/cert-ignore", "/multimon", "/usb:auto"}
+config: {"/cert-ignore", "/multimon", "/usb:auto", "/microphone:sys:alsa","/sound:sys:alsa","/multimedia:sys:alsa"}
 servers:
   server1:
     name: srv-farm
