@@ -45,11 +45,11 @@ def RunFreerdp(server):
     "/p:" + password.get()
            ]
 
-    for i in (cfg["config"]).split():
+    for i in (cfg["config"]):
         arg.append(i)
 
     if (cfg["servers"][server]["extendedconfig"]) != "":
-        for i in (cfg["servers"][server]["extendedconfig"]).split():
+        for i in (cfg["servers"][server]["extendedconfig"]):
             arg.append(i)
 
     print(arg)

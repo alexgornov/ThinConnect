@@ -1,11 +1,11 @@
 domain: confi.ru
-config: "/cert-ignore /multimon /usb:auto"
+config: {"/cert-ignore", "/multimon", "/usb:auto"}
 servers:
   server1:
     name: srv-farm
     ip: 192.168.0.167
-    extendedconfig: "/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP /f"
+    extendedconfig: {"/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP", "/f"}
   server2:
     name: srv-rd
     ip: 192.168.88.251
-    extendedconfig: "/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.Collection1C /f"
+    extendedconfig: {"/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.Collection1C", "/f"}
