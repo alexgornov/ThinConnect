@@ -39,7 +39,7 @@ def RunFreerdp(server):
     arg=["xfreerdp",
     "/v:" + (cfg["servers"][server]["ip"]),
     "/d:" + (cfg["domain"]),
-    "/load-balance-info:" + (cfg["servers"][server]["loadbalanceinfo"]),
+    #"/load-balance-info:" + (cfg["servers"][server]["loadbalanceinfo"]),
     "/u:" + login.get(),
     "/p:" + password.get()]
 
