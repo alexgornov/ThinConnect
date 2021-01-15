@@ -9,12 +9,14 @@
 
 from tkinter import *
 from tkinter import messagebox
-import socket
-import yaml
-import subprocess
+import socket, yaml, subprocess, getpass
 
+#Read config file
 with open("config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
+
+#Get username
+username = getpass.getuser()
 
 def TestConnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -51,6 +53,7 @@ def RunFreerdp(server):
             arg.append(i)
     print(arg)
     messagebox.showinfo("test", arg)
+    messagebox.showinfo("username", username)
     # Очищаем поля
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
