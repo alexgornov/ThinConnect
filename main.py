@@ -81,6 +81,7 @@ f_center.place(relx=.5, rely=.5, anchor="c")
 login = StringVar()
 password = StringVar()
 
+#add imagelogo
 if imagepath != "":
     img = Image.open(imagepath)
     img = img.resize((500,100),Image.ANTIALIAS)
