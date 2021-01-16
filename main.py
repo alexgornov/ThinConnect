@@ -3,16 +3,20 @@
 #
 # need packet freerdp2-x11
 # python3-tk
-#
+# pip install pillow
 #
 #############################################################################
 
 from tkinter import *
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import socket
 import yaml
 import subprocess
 import getpass
+
+#Put image file name here
+imagepath = "confi.png"
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
@@ -71,25 +75,36 @@ def RunFreerdp(server):
 root = Tk()
 root.attributes('-fullscreen', True)
 
+f_center = Frame(root)
+f_center.place(relx=.5, rely=.5, anchor="c")
+
 login = StringVar()
 password = StringVar()
 
-loginLabel = Label(text="Логин: ")
-passLabel = Label(text="Пароль: ")
+if imagepath != "":
+    img = Image.open(imagepath)
+    img = img.resize((500,100),Image.ANTIALIAS)
+    img = ImageTk.PhotoImage(img)
+    imgLabel = Label(f_center, image=img)
+    imgLabel.image = img
+    imgLabel.grid(row=0, column=0, sticky="w", columnspan=6)
 
-loginLabel.grid(row=0, column=0, sticky="w")
-passLabel.grid(row=1, column=0, sticky="w")
+loginLabel = Label(f_center, text="Логин: ")
+passLabel = Label(f_center, text="Пароль: ")
 
-loginEntry = Entry(textvariable=login)
-loginEntry.grid(row=0, column=1, padx=5, pady=5)
+loginLabel.grid(row=1, column=1, sticky="e")
+passLabel.grid(row=2, column=1, sticky="e")
 
-passEntry = Entry(textvariable=password, show="*")
-passEntry.grid(row=1, column=1, padx=5, pady=5)
+loginEntry = Entry(f_center, textvariable=login)
+loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N+S+W+E)
 
-BtnConnect = Button(text="Подключиться", command=ConnectButton)
-BtnConnect.grid(row=2, column=1, padx=5, pady=5, sticky="e")
+passEntry = Entry(f_center, textvariable=password, show="*")
+passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N+S+W+E)
 
-BtnExit = Button(text="Выход", command=exit)
-BtnExit.grid(row=3, column=1, padx=5, pady=5, sticky="e")
+BtnConnect = Button(f_center, text="Подключиться", command=ConnectButton)
+BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N+S+W+E)
+
+BtnExit = Button(f_center, text="Выход", command=exit)
+BtnExit.grid(row=4, column=2, padx=5, pady=5, sticky=N+S+W+E)
 
 root.mainloop()
