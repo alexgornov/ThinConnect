@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 apt update
 apt upgrade
 apt install -y freerdp2-x11

@@ -1,23 +1,75 @@
 ---
+#Need apt install python-netaddr
 - name: Setup Thinclient
   hosts: thinclients
+
+  vars:
+    admin_login: saadm
+    user_login: user
+
+  vars_prompt:
+    - name: admin_password
+      prompt: "Input password for {{ admin_login }}:"
+    - name: user_password
+      prompt: "Input password for {{ user_login }}:"
+
   tasks:
+  - name: Get MAC addr - debug
+    debug: msg="{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress | hwaddr('bare')}}"
+  - name: Set a hostname
+    hostname:
+      name: lubuntu_{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress | hwaddr('bare')}}
   - name: add change keyboard layout
-    lineinfile: dest=/etc/default/keyboard
-    regexp='^XKBOPTIONS'
-    insertbefore=BOF
-    line='XKBOPTIONS=\"grp:ctrl_shift_toggle,grp:alt_shift_toggle,grp_led:scroll\"'
+    lineinfile:
+      path: /etc/default/keyboard
+      regexp: '^XKBOPTIONS'
+      insertbefore: BOF
+      line: 'XKBOPTIONS=\"grp:ctrl_shift_toggle,grp:alt_shift_toggle,grp_led:scroll\"'
+#apt upgrade, install, delete lightdm-locker
   - name:  Apt update and upgrade
     apt:
-      upgrade: yes    
+      upgrade: yes
       update_cache: yes
-  - name: Install freerdp
-    apt: name=freerdp2-x11
-  - name: Install python3-tk (tkinter)
-    apt: name=python3-tk
-  - name: Install python3-pil (pillow)
-    apt: name=python3-pil
-  - name: Install python3-pip (pip)
-    apt: name=python3-pip
-    
-    
+  - name: Install packages
+    apt:
+      name:
+           - freerdp2-x11
+           - python3
+           - python3-tk
+           - python3-pil
+           - python3-pip
+  - name: Remove lockskreen package
+    apt:
+      name: light-locker
+      state: absent
+      autoremove: yes
+  - name: Create user
+    user:
+      name: "{{ user_login }}"
+      shell: /bin/bash
+      home: /home/{{ test_user }}
+      password: "{{ user_password | password_hash('sha512') }}"
+      pdate_password: on_create
+  - name: Setup autologin for user
+    blockinfile:
+      path: /etc/lightdm/lightdm.conf.d/autologin.conf
+      state: present
+      create: yes
+      block: |
+        [SeatDefaults]
+        autologin-user=user
+        autologin-user-timeout=0
+  - name: Create Folder for script
+    file:
+      path: /opt/conficonnect
+      state: directory
+  - name: Copy script and config to host
+    copy:
+      src: "{{ item }}"
+      dest: /opt/conficonnect/
+      owner: "{{ admin_login }}"
+      mode: 644
+      loop:
+        - main.py
+        - config.yml
+  - name: Add main.py to startup
