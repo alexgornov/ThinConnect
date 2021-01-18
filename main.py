@@ -16,7 +16,7 @@ import subprocess
 import getpass
 
 #Put image file name here
-imagepath = "confi.png"
+imagepath = ""
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
@@ -84,7 +84,7 @@ password = StringVar()
 #add imagelogo
 if imagepath != "":
     img = Image.open(imagepath)
-    img = img.resize((500,100),Image.ANTIALIAS)
+    img = img.resize((500, 100), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     imgLabel = Label(f_center, image=img)
     imgLabel.image = img
