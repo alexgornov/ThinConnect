@@ -1,0 +1,23 @@
+---
+- name: Setup Thinclient
+  hosts: thinclients
+  tasks:
+  - name: add change keyboard layout
+    lineinfile: dest=/etc/default/keyboard
+    regexp='^XKBOPTIONS'
+    insertbefore=BOF
+    line='XKBOPTIONS=\"grp:ctrl_shift_toggle,grp:alt_shift_toggle,grp_led:scroll\"'
+  - name:  Apt update and upgrade
+    apt:
+      upgrade: yes    
+      update_cache: yes
+  - name: Install freerdp
+    apt: name=freerdp2-x11
+  - name: Install python3-tk (tkinter)
+    apt: name=python3-tk
+  - name: Install python3-pil (pillow)
+    apt: name=python3-pil
+  - name: Install python3-pip (pip)
+    apt: name=python3-pip
+    
+    
