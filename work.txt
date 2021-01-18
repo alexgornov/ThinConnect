@@ -11,3 +11,8 @@
 	5 - пользователь, ключ
 	6 - запретить alt-tab
 	7 - отключить блокировку экрана ?
+
+root
+umask 022
+pip3 install --upgrade tk
+pip3 install --upgrade Pillow

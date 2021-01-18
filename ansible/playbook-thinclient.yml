@@ -72,4 +72,6 @@
       loop:
         - main.py
         - config.yml
+        - confi.png
   - name: Add main.py to startup
+
