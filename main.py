@@ -62,9 +62,9 @@ def RunFreerdp(server):
     if (cfg["servers"][server]["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]):
             arg.append(i)
-
-    print(arg)
-    messagebox.showinfo("test", arg)
+    #For debug:
+    #print(arg)
+    #messagebox.showinfo("test", arg)
     # Clear Entry
     loginEntry.delete(0, END)
     passEntry.delete(0, END)

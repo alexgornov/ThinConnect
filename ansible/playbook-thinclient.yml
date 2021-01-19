@@ -6,12 +6,13 @@
   vars:
     admin_login: saadm
     user_login: user
+    path: /opt/conficonnect/
 
   vars_prompt:
     - name: admin_password
-      prompt: "Input password for {{ admin_login }}:"
+      prompt: "Input password for {{ admin_login }}: "
     - name: user_password
-      prompt: "Input password for {{ user_login }}:"
+      prompt: "Input password for {{ user_login }}: "
 
   tasks:
   - name: Get MAC addr - debug
@@ -19,6 +20,7 @@
   - name: Set a hostname
     hostname:
       name: lubuntu_{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress | hwaddr('bare')}}
+
   - name: add change keyboard layout
     lineinfile:
       path: /etc/default/keyboard
@@ -36,17 +38,22 @@
            - freerdp2-x11
            - python3
            - python3-tk
-           - python3-pil
            - python3-pip
   - name: Remove lockskreen package
     apt:
       name: light-locker
       state: absent
       autoremove: yes
+  - name: pip3 install pyllow
+    pip:
+      executable: python3
+      name: pyllow
+
   - name: Create user
     user:
       name: "{{ user_login }}"
       shell: /bin/bash
+      groups: user,cdrom,plugdev
       home: /home/{{ test_user }}
       password: "{{ user_password | password_hash('sha512') }}"
       pdate_password: on_create
@@ -61,12 +68,12 @@
         autologin-user-timeout=0
   - name: Create Folder for script
     file:
-      path: /opt/conficonnect
+      path: "{{ path }}"
       state: directory
   - name: Copy script and config to host
     copy:
       src: "{{ item }}"
-      dest: /opt/conficonnect/
+      dest: "{{ path }}"
       owner: "{{ admin_login }}"
       mode: 644
       loop:
@@ -74,4 +81,8 @@
         - config.yml
         - confi.png
   - name: Add main.py to startup
+    lineinfile:
+      path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
+      line: "lxterminal -working-directory={{ path }} -e python3 main.py"
+
 

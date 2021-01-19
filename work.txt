@@ -12,7 +12,12 @@
 	6 - запретить alt-tab
 	7 - отключить блокировку экрана ?
 
-root
-umask 022
-pip3 install --upgrade tk
-pip3 install --upgrade Pillow
+
+
+sudo apt install pythopn3-tk python3-pip
+sudo pip3 install --upgrade Pillow
+
+
+/home/user/.config/lxsession/Lubuntu/autostart
+
+lxterminal -working-directory=/home/user/ConfiConnect -e python3 main.py
