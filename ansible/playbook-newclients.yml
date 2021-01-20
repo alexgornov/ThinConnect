@@ -7,7 +7,7 @@
     username_admin: saadm
   vars_prompt:
     name: admin_password
-    prompt: "Input password for {{ username_admin }}"
+    prompt: "new password for {{ username_admin }}"
     confirm: yes
   tasks:
     - name: Create ansible user
@@ -20,7 +20,7 @@
       authorized_key:
         user: "{{ username_ansible }}"
         state: present
-        key: "{{ lookup('file', {{ key_file }}) }}"
+        key: "{{ lookup('file', key_file) }}"
     - name: Add ansible user to sudoers
       lineinfile:
         dest: /etc/sudoers
