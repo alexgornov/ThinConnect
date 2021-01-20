@@ -7,6 +7,7 @@
     admin_login: saadm
     user_login: user
     path: /opt/conficonnect/
+    srcpath: /home/mrsnuff/PycharmProjects/ConfiConnect/
 
   vars_prompt:
     - name: user_password
@@ -27,10 +28,19 @@
       insertbefore: BOF
       line: 'XKBOPTIONS=\"grp:ctrl_shift_toggle,grp:alt_shift_toggle,grp_led:scroll\"'
 #apt upgrade, install, delete lightdm-locker
+
+  - name: Reboot
+    reboot:
+      post_reboot_delay: 30
+
   - name:  Apt update and upgrade
     apt:
       upgrade: yes
       update_cache: yes
+  - name: Reboot
+    reboot:
+      pre_reboot_delay: 30
+      post_reboot_delay: 60
   - name: Install packages
     apt:
       name:
@@ -43,11 +53,9 @@
       name: light-locker
       state: absent
       autoremove: yes
-  - name: pip3 install pyllow
-    pip:
-      executable: python3
-      name: pyllow
-
+  - name: Install pillow
+    shell:
+      cmd: sudo pip3 install --upgrade Pillow
   - name: Create user
     user:
       name: "{{ user_login }}"
@@ -55,7 +63,7 @@
       groups: cdrom,plugdev
       home: /home/{{ user_login }}
       password: "{{ user_password | password_hash('sha512') }}"
-      pdate_password: on_create
+      update_password: on_create
   - name: Setup autologin for user
     blockinfile:
       path: /etc/lightdm/lightdm.conf.d/autologin.conf
@@ -71,14 +79,19 @@
       state: directory
   - name: Copy script and config to host
     copy:
-      src: "{{ item }}"
+      src: "{{ srcpath }}{{ item }}"
       dest: "{{ path }}"
       owner: "{{ admin_login }}"
       mode: 644
-      loop:
-        - main.py
-        - config.yml
-        - confi.png
+    loop:
+      - main.py
+      - config.yml
+      - confi.png
+  - name: Reboot
+    reboot:
+      pre_reboot_delay: 30
+      post_reboot_delay: 60
+
   - name: Add main.py to startup
     lineinfile:
       path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
