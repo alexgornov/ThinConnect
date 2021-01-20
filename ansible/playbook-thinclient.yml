@@ -83,5 +83,3 @@
     lineinfile:
       path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
       line: "lxterminal -working-directory={{ path }} -e python3 main.py"
-
-
