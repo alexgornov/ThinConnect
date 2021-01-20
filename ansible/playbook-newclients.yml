@@ -1,0 +1,32 @@
+---
+- name: Setup new Thinclient
+  hosts: news
+  vars:
+    username_ansible: ansible
+    key_file: ckey_rsa.pub
+    username_admin: saadm
+  vars_prompt:
+    name: admin_password
+    prompt: "Input password for {{ username_admin }}"
+    confirm: yes
+  tasks:
+    - name: Create ansible user
+      user:
+        name: "{{ username_ansible }}"
+        shell: /bin/bash
+        home: /home/{{ username_ansible }}
+        groups: root,cdrom,plugdev
+    - name: set authorized key
+      authorized_key:
+        user: "{{ username_ansible }}"
+        state: present
+        key: "{{ lookup('file', {{ key_file }}) }}"
+    - name: Add ansible user to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ username_ansible }} ALL=(ALL)       NOPASSWD: ALL"
+        validate: 'visudo -cf %s'
+    - name: Set password for admin user
+      user:
+        name: "{{ username_admin }}"
+        password: "{{ admin_password | password_hash('sha512') }}"

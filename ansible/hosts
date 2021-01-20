@@ -1,2 +1,5 @@
 [thinclients]
-1 ansible_host=
+test ansible_host=192.168.15.241
+
+[news]
+test ansible_host=192.168.15.241

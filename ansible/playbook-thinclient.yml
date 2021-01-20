@@ -9,10 +9,9 @@
     path: /opt/conficonnect/
 
   vars_prompt:
-    - name: admin_password
-      prompt: "Input password for {{ admin_login }}: "
     - name: user_password
       prompt: "Input password for {{ user_login }}: "
+      confirm: yes
 
   tasks:
   - name: Get MAC addr - debug
@@ -53,8 +52,8 @@
     user:
       name: "{{ user_login }}"
       shell: /bin/bash
-      groups: user,cdrom,plugdev
-      home: /home/{{ test_user }}
+      groups: cdrom,plugdev
+      home: /home/{{ user_login }}
       password: "{{ user_password | password_hash('sha512') }}"
       pdate_password: on_create
   - name: Setup autologin for user
@@ -64,7 +63,7 @@
       create: yes
       block: |
         [SeatDefaults]
-        autologin-user=user
+        autologin-user={{ user_login }}
         autologin-user-timeout=0
   - name: Create Folder for script
     file:
