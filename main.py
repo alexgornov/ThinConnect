@@ -38,7 +38,7 @@ def TestConnection(host, port):
         return True
 
 
-def ConnectButton():
+def ConnectButton(*args):
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
             messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
@@ -71,7 +71,8 @@ def RunFreerdp(server):
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
     # Run freerdp
-    subprocess.run(arg)
+    subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
+    #Обработка ошибок
 
 #Window
 root = Tk()
@@ -100,6 +101,7 @@ passLabel.grid(row=2, column=1, sticky="e")
 
 loginEntry = Entry(f_center, textvariable=login)
 loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N+S+W+E)
+loginEntry.focus()
 
 passEntry = Entry(f_center, textvariable=password, show="*")
 passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N+S+W+E)
@@ -107,7 +109,14 @@ passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N+S+W+E)
 BtnConnect = Button(f_center, text="Подключиться", command=ConnectButton)
 BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N+S+W+E)
 
+root.bind('<Return>', ConnectButton)
+
 BtnExit = Button(f_center, text="Выход", command=exit)
 BtnExit.grid(row=4, column=2, padx=5, pady=5, sticky=N+S+W+E)
+
+#Adminmenu
+AdmButton = Button(text="Admin")
+AdmButton.place(relx=0.9, rely=0.9, anchor="c")
+
 
 root.mainloop()
