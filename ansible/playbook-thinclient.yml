@@ -100,5 +100,26 @@
 
   - name: Add main.py to startup
     lineinfile:
+      create: yes
+      owner: "{{ user_login }}"
+      group: "{{ user_login }}"
+      mode: "u=rw,g=rw,o=r"
       path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
       line: "lxterminal --working-directory={{ path }} -e python3 main.py"
+
+  - name: Remove autorun usb
+    blockinfile:
+      path: /home/{{ user_login }}/.config/pcmanfm/lubuntu/pcmanfm.conf
+      create: yes
+      owner: "{{ user_login }}"
+      group: "{{ user_login }}"
+      mode: "u=rw,g=rw,o=r"
+      block: |
+        [volume]
+        mount_on_startup=1
+        mount_removable=1
+        autorun=0
+
+  - name: Reboot
+    reboot:
+      pre_reboot_delay: 30

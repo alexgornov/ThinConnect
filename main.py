@@ -3,7 +3,7 @@
 #
 # need packet freerdp2-x11
 # python3-tk
-# pip install pillow
+# pip3 install pillow
 #
 #############################################################################
 
@@ -14,9 +14,10 @@ import socket
 import yaml
 import subprocess
 import getpass
+import os
 
 #Put image file name here
-imagepath = ""
+imagepath = "confi.png"
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
@@ -52,9 +53,10 @@ def RunFreerdp(server):
     "/v:" + (cfg["servers"][server]["ip"]),
     "/d:" + (cfg["domain"]),
     "/u:" + login.get(),
-    "/p:" + password.get(),
-    "/drive:USB,/media/" + username
+    "/p:" + password.get()
            ]
+    if os.path.isdir("/media/" + username):
+        arg.append("/drive:USB,/media/" + username)
 
     for i in (cfg["config"]):
         arg.append(i)
@@ -82,7 +84,7 @@ login = StringVar()
 password = StringVar()
 
 #add imagelogo
-if imagepath != "":
+if os.path.isfile(imagepath):
     img = Image.open(imagepath)
     img = img.resize((500, 100), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
