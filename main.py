@@ -74,8 +74,16 @@ def RunFreerdp(server):
     # Clear Entry
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
+    loginEntry.configure(state=DISABLED)
+    passEntry.configure(state=DISABLED)
+    BtnConnect.configure(state=DISABLED, text="Подключение...")
+
     # Run freerdp
-    subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
+    process = subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
+    process.wait()
+    loginEntry.configure(state=NORMAL)
+    passEntry.configure(state=NORMAL)
+    BtnConnect.configure(state=NORMAL, text="Подключиться")
     ######Error processing:
 
 
