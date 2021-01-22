@@ -22,10 +22,10 @@ from passlib.hash import pbkdf2_sha256
 imagepath = "confi.png"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0" # sha256 hash pass
 freerdperrors = {
-    '131': 'Неправильный логин\пароль',
-    '132': 'Неправильный логин\пароль',
-    '17': 'Ошибка лицензии',
-    '18': 'Ошибка лицензии',
+    131: 'Неправильный логин\пароль',
+    132: 'Неправильный логин\пароль',
+    17: 'Ошибка лицензии',
+    18: 'Ошибка лицензии',
 }
 
 #Read config file
