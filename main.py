@@ -83,8 +83,8 @@ def RunFreerdp(server):
     process = subprocess.run(arg)
     ######Error processing:
     print(process.returncode)
-    if process.returncode == 0: True
-    else:
+
+    if process.returncode != 0 and process.returncode !=12:
         messagebox.showerror("Error", freerdperrors[process.returncode])
 
 def adminMenu():
