@@ -46,6 +46,9 @@ def ConnectButton(*args):
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
             messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
+            loginEntry.configure(state=DISABLED)
+            passEntry.configure(state=DISABLED)
+            BtnConnect.configure(state=DISABLED, text="Подключение...")
             RunFreerdp(i)
             break
     else:
@@ -71,16 +74,13 @@ def RunFreerdp(server):
     #For debug:
     #print(arg)
     #messagebox.showinfo("test", arg)
-    # Clear Entry
-    loginEntry.delete(0, END)
-    passEntry.delete(0, END)
-    loginEntry.configure(state=DISABLED)
-    passEntry.configure(state=DISABLED)
-    BtnConnect.configure(state=DISABLED, text="Подключение...")
 
     # Run freerdp
     process = subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
+    #process = subprocess.Popen(['ping', '8.8.8.8'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
     process.wait()
+    loginEntry.delete(0, END)
+    passEntry.delete(0, END)
     loginEntry.configure(state=NORMAL)
     passEntry.configure(state=NORMAL)
     BtnConnect.configure(state=NORMAL, text="Подключиться")
