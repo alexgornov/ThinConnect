@@ -21,6 +21,38 @@ from passlib.hash import pbkdf2_sha256
 #Put image file name here
 imagepath = "confi.png"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0" # sha256 hash pass
+freerdperrors = dict(
+    XF_EXIT_SUCCESS = 0,
+    XF_EXIT_DISCONNECT = 1,
+	XF_EXIT_LOGOFF = 2,
+	XF_EXIT_IDLE_TIMEOUT = 3,
+	XF_EXIT_LOGON_TIMEOUT = 4,
+	XF_EXIT_CONN_REPLACED = 5,
+	XF_EXIT_OUT_OF_MEMORY = 6,
+	XF_EXIT_CONN_DENIED = 7,
+	XF_EXIT_CONN_DENIED_FIPS = 8,
+	XF_EXIT_USER_PRIVILEGES = 9,
+	XF_EXIT_FRESH_CREDENTIALS_REQUIRED = 10,
+	XF_EXIT_DISCONNECT_BY_USER = 11,
+	XF_EXIT_LICENSE_INTERNAL = 16,
+	XF_EXIT_LICENSE_NO_LICENSE_SERVER = 17,
+	XF_EXIT_LICENSE_NO_LICENSE = 18,
+	XF_EXIT_LICENSE_BAD_CLIENT_MSG = 19,
+	XF_EXIT_LICENSE_HWID_DOESNT_MATCH = 20,
+	XF_EXIT_LICENSE_BAD_CLIENT = 21,
+	XF_EXIT_LICENSE_CANT_FINISH_PROTOCOL = 22,
+	XF_EXIT_LICENSE_CLIENT_ENDED_PROTOCOL = 23,
+	XF_EXIT_LICENSE_BAD_CLIENT_ENCRYPTION = 24,
+	XF_EXIT_LICENSE_CANT_UPGRADE = 25,
+	XF_EXIT_LICENSE_NO_REMOTE_CONNECTIONS = 26,
+	XF_EXIT_RDP = 32,
+	XF_EXIT_PARSE_ARGUMENTS = 128,
+	XF_EXIT_MEMORY = 129,
+	XF_EXIT_PROTOCOL = 130,
+	XF_EXIT_CONN_FAILED = 131,
+	XF_EXIT_AUTH_FAILURE = 132,
+	XF_EXIT_UNKNOWN = 255
+)
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
@@ -46,9 +78,6 @@ def ConnectButton(*args):
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
             messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
-            loginEntry.configure(state=DISABLED)
-            passEntry.configure(state=DISABLED)
-            BtnConnect.configure(state=DISABLED, text="Подключение...")
             RunFreerdp(i)
             break
     else:
@@ -74,17 +103,13 @@ def RunFreerdp(server):
     #For debug:
     #print(arg)
     #messagebox.showinfo("test", arg)
-
-    # Run freerdp
-    process = subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
-    #process = subprocess.Popen(['ping', '8.8.8.8'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
-    process.wait()
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
-    loginEntry.configure(state=NORMAL)
-    passEntry.configure(state=NORMAL)
-    BtnConnect.configure(state=NORMAL, text="Подключиться")
+    # Run freerdp
+    process = subprocess.run(arg)
     ######Error processing:
+    print(process.returncode)
+
 
 
 def adminMenu():
