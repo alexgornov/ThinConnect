@@ -62,6 +62,9 @@
   - name: Install pillow
     shell:
       cmd: sudo pip3 install --upgrade Pillow
+  - name: Install passlib
+      shell:
+        cmd: sudo pip3 install --upgrade passlib
   - name: Create user
     user:
       name: "{{ user_login }}"

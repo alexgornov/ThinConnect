@@ -1,10 +1,11 @@
 #############################################################################
 #
 #
-# need packet freerdp2-x11
+# Need:
+# packet freerdp2-x11
 # python3-tk
 # pip3 install pillow
-#
+# pip3 install passlib
 #############################################################################
 
 from tkinter import *
@@ -15,17 +16,18 @@ import yaml
 import subprocess
 import getpass
 import os
+from passlib.hash import pbkdf2_sha256
 
 #Put image file name here
 imagepath = "confi.png"
+adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0" # sha256 hash pass
 
 #Read config file
 with open("config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
 
-#Get username
+#Get username for USB Mount
 username = getpass.getuser()
-
 
 def TestConnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,6 +41,8 @@ def TestConnection(host, port):
 
 
 def ConnectButton(*args):
+    #####Check input
+
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
             messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
@@ -72,7 +76,17 @@ def RunFreerdp(server):
     passEntry.delete(0, END)
     # Run freerdp
     subprocess.Popen(arg, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=False)
-    #Обработка ошибок
+    ######Error processing:
+
+
+def adminMenu():
+    if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
+        f_menu = Frame(root)
+        f_menu.place(relx=.5, rely=.8, anchor="c")
+        BtnExit = Button(f_menu, text="Выход", command=exit)
+        BtnExit.grid(row=0, column=0, padx=5, pady=5, sticky=N + S + W + E)
+    else:
+        messagebox.showerror("Ошибка", "Неверный пароль")
 
 #Window
 root = Tk()
@@ -111,12 +125,15 @@ BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N+S+W+E)
 
 root.bind('<Return>', ConnectButton)
 
-BtnExit = Button(f_center, text="Выход", command=exit)
-BtnExit.grid(row=4, column=2, padx=5, pady=5, sticky=N+S+W+E)
-
 #Adminmenu
-AdmButton = Button(text="Admin")
-AdmButton.place(relx=0.9, rely=0.9, anchor="c")
+adminpass = StringVar()
 
+f_admin = Frame(root)
+f_admin.place(relx=0.9, rely=0.9, anchor="c")
+AdmPassword = Entry(f_admin, textvariable=adminpass, show="*")
+AdmPassword.grid(row=0, column=0, sticky=N+S+W+E)
+AdmPassword.config(background="#F0F0F0")
+AdmButton = Button(f_admin, text="Admin", command=adminMenu)
+AdmButton.grid(row=1, column=0, sticky=N+S+W+E)
 
 root.mainloop()
