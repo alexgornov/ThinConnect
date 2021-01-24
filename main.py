@@ -123,14 +123,15 @@ def RunFreerdp(server):
     process = subprocess.run(arg)
     #Error processing freerdp:
     print(process.returncode)
-    if process.returncode == 0 or process.returncode == 13 or process.returncode == 1 or process.returncode == 2:
+    code = process.returncode
+    if code == 0 or code == 13 or code == 1 or code == 2 or code == 12:
         True
-    elif process.returncode == 131 or process.returncode == 132:
-        messagebox.showerror("Ошибка логина-пароля", "Повторите подключение\n" + freerdperrors[process.returncode])
-    elif process.returncode in freerdperrors:
-        messagebox.showerror("Ошибка", freerdperrors[process.returncode])
+    elif code == 131 or code == 132:
+        messagebox.showerror("Ошибка логина-пароля", "Повторите подключение\n")
+    elif code in freerdperrors:
+        messagebox.showerror("Ошибка", freerdperrors[code])
     else:
-        messagebox.showerror("Ошибка", "Код ошибки =" + process.returncode)
+        messagebox.showerror("Ошибка", "Код ошибки =" + code)
 
 def adminMenu():
     if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
