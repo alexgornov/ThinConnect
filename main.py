@@ -145,6 +145,9 @@ def adminMenu():
         messagebox.showerror("Ошибка", "Неверный пароль")
         AdmPassword.delete(0, END)
 
+def reboot():
+    os.system('sudo reboot')
+
 #Window
 root = Tk()
 root.attributes('-fullscreen', True)
@@ -166,22 +169,21 @@ if os.path.isfile(imagepath):
 
 loginLabel = Label(f_center, text="Логин: ")
 passLabel = Label(f_center, text="Пароль: ")
-
 loginLabel.grid(row=1, column=1, sticky="e")
 passLabel.grid(row=2, column=1, sticky="e")
-
 loginEntry = Entry(f_center, textvariable=login)
 loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N+S+W+E)
 loginEntry.focus()
-
 passEntry = Entry(f_center, textvariable=password, show="*")
 passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N+S+W+E)
-
 BtnConnect = Button(f_center, text="Подключиться", command=ConnectButton)
 BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N+S+W+E)
-
 root.bind('<Return>', ConnectButton)
 
+f_lf = Frame(root)
+f_lf.place(relx=0.1, rely=0.9, anchor="c")
+rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
+rebootBtn.grid(row=0, column=0, sticky=N+S+W+E)
 #Adminmenu
 adminpass = StringVar()
 
