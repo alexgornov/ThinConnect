@@ -127,11 +127,11 @@ def RunFreerdp(server):
     if code == 0 or code == 13 or code == 1 or code == 2 or code == 12:
         True
     elif code == 131 or code == 132:
-        messagebox.showerror("Ошибка логина-пароля", "Повторите подключение\n")
+        messagebox.showerror("Повторите подключение", "Ошибка логина-пароля")
     elif code in freerdperrors:
-        messagebox.showerror("Ошибка", freerdperrors[code])
+        messagebox.showerror("Ошибка", "Ошибка = {}".format(freerdperrors[code]))
     else:
-        messagebox.showerror("Ошибка", "Код ошибки =" + code)
+        messagebox.showerror("Ошибка", "Код ошибки = {}".format(code))
 
 def adminMenu():
     if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
