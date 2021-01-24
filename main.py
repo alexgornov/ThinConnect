@@ -22,10 +22,40 @@ from passlib.hash import pbkdf2_sha256
 imagepath = "confi.png"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0" # sha256 hash pass
 freerdperrors = {
-    131: 'Неправильный логин\пароль',
-    132: 'Неправильный логин\пароль',
-    17: 'Ошибка лицензии',
-    18: 'Ошибка лицензии',
+    # section 0-15: protocol-independent codes
+    0: '0 XF_EXIT_SUCCESS',
+    1: '1 XF_EXIT_DISCONNECT',
+    2: '2 XF_EXIT_LOGOFF',
+    3: '3 XF_EXIT_IDLE_TIMEOUT',
+    4: '4 XF_EXIT_LOGON_TIMEOUT',
+    5: '5 XF_EXIT_CONN_REPLACED',
+    6: '6 XF_EXIT_OUT_OF_MEMORY',
+    7: '7 XF_EXIT_CONN_DENIED',
+    8: '8 XF_EXIT_CONN_DENIED_FIPS',
+    9: '9 XF_EXIT_USER_PRIVILEGES',
+    10: '10 XF_EXIT_FRESH_CREDENTIALS_REQUIRED',
+    11: '11 XF_EXIT_DISCONNECT_BY_USER',
+    # section 16-31: license error set
+    16: '16 XF_EXIT_LICENSE_INTERNAL',
+    17: '17 XF_EXIT_LICENSE_NO_LICENSE_SERVER',
+    18: '18 XF_EXIT_LICENSE_NO_LICENSE',
+    19: '19 XF_EXIT_LICENSE_BAD_CLIENT_MSG',
+    20: '20 XF_EXIT_LICENSE_HWID_DOESNT_MATCH',
+    21: '21 XF_EXIT_LICENSE_BAD_CLIENT',
+    22: '22 XF_EXIT_LICENSE_CANT_FINISH_PROTOCOL',
+    23: '23 XF_EXIT_LICENSE_CLIENT_ENDED_PROTOCOL',
+    24: '24 XF_EXIT_LICENSE_BAD_CLIENT_ENCRYPTION',
+    25: '25 XF_EXIT_LICENSE_CANT_UPGRADE',
+    26: '26 XF_EXIT_LICENSE_NO_REMOTE_CONNECTIONS',
+    # section 32-127: RDP protocol error set
+    32: '32 XF_EXIT_RDP',
+    # section 128-254: xfreerdp specific exit codes
+    128: '128 XF_EXIT_PARSE_ARGUMENTS',
+    129: '129 XF_EXIT_MEMORY',
+    130: '130 XF_EXIT_PROTOCOL',
+    131: '131 XF_EXIT_CONN_FAILED',
+    132: '132 XF_EXIT_AUTH_FAILURE',
+    255: '255 XF_EXIT_UNKNOWN',
 }
 
 #Read config file
@@ -45,9 +75,20 @@ def TestConnection(host, port):
     else:
         return True
 
-
 def ConnectButton(*args):
-    #####Check input
+    #Check input
+    chars = set('~`!@#$%^&*()\'+| \\|/,;')
+    if login.get() == "":
+        messagebox.showerror("Ошибка", "Логин не может быть пустым")
+        return
+    if any((c in chars) for c in login.get()):
+        messagebox.showerror("Ошибка", "Недопустимый логин")
+        loginEntry.delete(0, END)
+        passEntry.delete(0, END)
+        return
+    if password.get() =='':
+        messagebox.showerror("Ошибка", "Пароль не может быть пустым")
+        return
 
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
@@ -56,7 +97,6 @@ def ConnectButton(*args):
             break
     else:
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
-
 
 def RunFreerdp(server):
     arg = ["xfreerdp",
@@ -77,24 +117,33 @@ def RunFreerdp(server):
     #For debug:
     #print(arg)
     #messagebox.showinfo("test", arg)
+    # Run freerdp
     loginEntry.delete(0, END)
     passEntry.delete(0, END)
-    # Run freerdp
     process = subprocess.run(arg)
-    ######Error processing:
+    #Error processing freerdp:
     print(process.returncode)
-
-    if process.returncode != 0 and process.returncode !=12:
-        messagebox.showerror("Error", freerdperrors[process.returncode])
+    if process.returncode == 0 or process.returncode == 13 or process.returncode == 1 or process.returncode == 2:
+        True
+    elif process.returncode == 131 or process.returncode == 132:
+        messagebox.showerror("Ошибка логина-пароля", "Повторите подключение\n" + freerdperrors[process.returncode])
+    elif process.returncode in freerdperrors:
+        messagebox.showerror("Ошибка", freerdperrors[process.returncode])
+    else:
+        messagebox.showerror("Ошибка", "Код ошибки =" + process.returncode)
 
 def adminMenu():
     if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
+        AdmPassword.delete(0, END)
         f_menu = Frame(root)
         f_menu.place(relx=.5, rely=.8, anchor="c")
         BtnExit = Button(f_menu, text="Выход", command=exit)
         BtnExit.grid(row=0, column=0, padx=5, pady=5, sticky=N + S + W + E)
+        BtnClose = Button(f_menu, text="Закрыть меню", command=f_menu.destroy)
+        BtnClose.grid(row=1, column=0, padx=5, pady=5, sticky=N + S + W + E)
     else:
         messagebox.showerror("Ошибка", "Неверный пароль")
+        AdmPassword.delete(0, END)
 
 #Window
 root = Tk()
