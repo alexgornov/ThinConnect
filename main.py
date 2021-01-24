@@ -146,7 +146,10 @@ def adminMenu():
         AdmPassword.delete(0, END)
 
 def reboot():
-    os.system('sudo reboot')
+    os.system('sudo systemctl reboot')
+
+def poweroff():
+    os.system('sudo systemctl poweroff')
 
 #Window
 root = Tk()
@@ -184,6 +187,8 @@ f_lf = Frame(root)
 f_lf.place(relx=0.1, rely=0.9, anchor="c")
 rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
 rebootBtn.grid(row=0, column=0, sticky=N+S+W+E)
+poweroffBtn = Button(f_lf, text="Выключение", command=poweroff)
+poweroffBtn.grid(row=1, column=0, sticky=N+S+W+E)
 #Adminmenu
 adminpass = StringVar()
 

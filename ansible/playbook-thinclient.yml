@@ -82,6 +82,12 @@
         [SeatDefaults]
         autologin-user={{ user_login }}
         autologin-user-timeout=0
+  - name: Add user to sudoers (reboot)
+      lineinfile:
+        dest: /etc/sudoers
+        line: "{{ user_login }} ALL= NOPASSWD: /usr/bin/systemctl reboot, /usr/bin/systemctl poweroff"
+        validate: 'visudo -cf %s'
+
   - name: Create Folder for script
     file:
       path: "{{ path }}"
