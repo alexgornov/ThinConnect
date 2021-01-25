@@ -63,8 +63,8 @@
     shell:
       cmd: sudo pip3 install --upgrade Pillow
   - name: Install passlib
-      shell:
-        cmd: sudo pip3 install --upgrade passlib
+    shell:
+      cmd: sudo pip3 install --upgrade passlib
   - name: Create user
     user:
       name: "{{ user_login }}"
@@ -83,9 +83,9 @@
         autologin-user={{ user_login }}
         autologin-user-timeout=0
   - name: Add user to sudoers (reboot)
-      lineinfile:
+    lineinfile:
         dest: /etc/sudoers
-        line: "{{ user_login }} ALL= NOPASSWD: /usr/bin/systemctl reboot, /usr/bin/systemctl poweroff"
+        line: "{{ user_login }} ALL= NOPASSWD: /usr/bin/systemctl reboot, /usr/bin/systemctl poweroff, /bin/systemctl poweroff, /bin/systemctl reboot"
         validate: 'visudo -cf %s'
 
   - name: Create Folder for script

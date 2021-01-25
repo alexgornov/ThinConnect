@@ -92,7 +92,7 @@ def ConnectButton(*args):
 
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
-            messagebox.showinfo("Подключение...", "Подключение к " + (cfg["servers"][i]["name"]))
+            messagebox.showinfo("Подключение...", "Подключение...")
             RunFreerdp(i)
             break
     else:

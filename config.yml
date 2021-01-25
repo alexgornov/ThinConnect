@@ -5,7 +5,3 @@ servers:
     name: srv-farm
     ip: 192.168.0.167
     extendedconfig: {"/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP", "/f"}
-  server2:
-    name: srv-rd
-    ip: 192.168.88.251
-    extendedconfig: {"/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.Collection1C", "/f"}
