@@ -1,3 +1,4 @@
 [thinclients]
-test ansible_host=192.168.15.205
+#one ansible_host=192.168.15.205
+two ansible_host=192.168.15.153
 [news]
