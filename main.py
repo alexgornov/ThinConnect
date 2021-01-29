@@ -77,7 +77,7 @@ def TestConnection(host, port):
 
 def ConnectButton(*args):
     #Check input
-    chars = set('~`!@#$%^&*()\'+| \\|/,;')
+    chars = set('~`!@#$%^&*()\'+| \\|/,;\"')
     if login.get() == "":
         messagebox.showerror("Ошибка", "Логин не может быть пустым")
         return
@@ -89,10 +89,8 @@ def ConnectButton(*args):
     if password.get() =='':
         messagebox.showerror("Ошибка", "Пароль не может быть пустым")
         return
-
     for i in (cfg["servers"]):
         if TestConnection((cfg["servers"][i]["ip"]), 3389):
-            messagebox.showinfo("Подключение...", "Подключение...")
             RunFreerdp(i)
             break
     else:
@@ -118,7 +116,6 @@ def RunFreerdp(server):
     #print(arg)
     #messagebox.showinfo("test", arg)
     # Run freerdp
-    loginEntry.delete(0, END)
     passEntry.delete(0, END)
     process = subprocess.run(arg)
     #Error processing freerdp:

@@ -82,11 +82,20 @@
         [SeatDefaults]
         autologin-user={{ user_login }}
         autologin-user-timeout=0
+
+  - name: Reboot
+    reboot:
+      pre_reboot_delay: 30
+      post_reboot_delay: 120
+  - name: Pause for open pcmanfm
+    pause:
+      prompt: "Open PCMANFM (file manager) on client  and return"
+      echo: no
   - name: Add user to sudoers (reboot)
     lineinfile:
-        dest: /etc/sudoers
-        line: "{{ user_login }} ALL= NOPASSWD: /usr/bin/systemctl reboot, /usr/bin/systemctl poweroff, /bin/systemctl poweroff, /bin/systemctl reboot"
-        validate: 'visudo -cf %s'
+      dest: /etc/sudoers
+      line: "{{ user_login }} ALL= NOPASSWD: /usr/bin/systemctl reboot, /usr/bin/systemctl poweroff, /bin/systemctl poweroff, /bin/systemctl reboot"
+      validate: 'visudo -cf %s'
 
   - name: Create Folder for script
     file:
@@ -102,27 +111,23 @@
       - main.py
       - config.yml
       - confi.png
-  - name: Reboot
-    reboot:
-      pre_reboot_delay: 30
-      post_reboot_delay: 30
 
   - name: Add main.py to startup
     lineinfile:
-      create: yes
-      owner: "{{ user_login }}"
-      group: "{{ user_login }}"
-      mode: "u=rw,g=rw,o=r"
+#      create: yes
+#      owner: "{{ user_login }}"
+#      group: "{{ user_login }}"
+#      mode: "u=rw,g=rw,o=r"
       path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
       line: "lxterminal --working-directory={{ path }} -e python3 main.py"
 
   - name: Remove autorun usb
     blockinfile:
       path: /home/{{ user_login }}/.config/pcmanfm/lubuntu/pcmanfm.conf
-      create: yes
-      owner: "{{ user_login }}"
-      group: "{{ user_login }}"
-      mode: "u=rw,g=rw,o=r"
+#      create: yes
+#      owner: "{{ user_login }}"
+#      group: "{{ user_login }}"
+#      mode: "u=rw,g=rw,o=r"
       block: |
         [volume]
         mount_on_startup=1
