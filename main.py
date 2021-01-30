@@ -17,10 +17,13 @@ import subprocess
 import getpass
 import os
 from passlib.hash import pbkdf2_sha256
+from datetime import datetime
 
-#Put image file name here
+# Put image file name here
 imagepath = "confi.png"
-adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0" # sha256 hash pass
+logfile = "connect.log"
+devicefile = "devices"
+adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"  # sha256 hash pass
 freerdperrors = {
     # section 0-15: protocol-independent codes
     0: '0 XF_EXIT_SUCCESS',
@@ -58,12 +61,36 @@ freerdperrors = {
     255: '255 XF_EXIT_UNKNOWN',
 }
 
-#Read config file
+# Read config file
 with open("config.yml", "r") as ymlfile:
     cfg = yaml.load(ymlfile)
 
-#Get username for USB Mount
+# Get username for USB Mount
 username = getpass.getuser()
+
+def clearlog():
+    f = open(logfile, 'w').close()
+
+def logging(info):
+    f = open(logfile, 'a')
+    #print("["+str(datetime.now())+"] " + info)
+    f.write("["+str(datetime.now())+"] " + info + "\n")
+    f.close()
+
+# Check connect device in list
+def getdevicesforredirect():
+    f = open('devices', 'r')
+    devfile = f.read().split('\n')
+    devlist = []
+    devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")
+    for i in devices:
+        devlist.append(i[23:32])
+    # return devlist
+    for i in devfile:
+        if i not in devlist:
+            devfile.remove(i)
+    return devfile
+
 
 def TestConnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -75,8 +102,9 @@ def TestConnection(host, port):
     else:
         return True
 
+
 def ConnectButton(*args):
-    #Check input
+    # Check input
     chars = set('~`!@#$%^&*()\'+| \\|/,;\"')
     if login.get() == "":
         messagebox.showerror("Ошибка", "Логин не может быть пустым")
@@ -86,7 +114,7 @@ def ConnectButton(*args):
         loginEntry.delete(0, END)
         passEntry.delete(0, END)
         return
-    if password.get() =='':
+    if password.get() == '':
         messagebox.showerror("Ошибка", "Пароль не может быть пустым")
         return
     for i in (cfg["servers"]):
@@ -96,12 +124,13 @@ def ConnectButton(*args):
     else:
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
 
+
 def RunFreerdp(server):
     arg = ["xfreerdp",
-    "/v:" + (cfg["servers"][server]["ip"]),
-    "/d:" + (cfg["domain"]),
-    "/u:" + login.get(),
-    "/p:" + password.get()
+           "/v:" + (cfg["servers"][server]["ip"]),
+           "/d:" + (cfg["domain"]),
+           "/u:" + login.get(),
+           "/p:" + password.get()
            ]
     if os.path.isdir("/media/" + username):
         arg.append("/drive:USB,/media/" + username)
@@ -112,15 +141,21 @@ def RunFreerdp(server):
     if (cfg["servers"][server]["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]):
             arg.append(i)
-    #For debug:
-    #print(arg)
-    #messagebox.showinfo("test", arg)
+    devices = getdevicesforredirect()
+    if devices:
+        for i in getdevicesforredirect():
+            arg.append("/usb:id,dev:" + i)
+    # For debug:
+    # print(arg)
+    messagebox.showinfo("test", arg)
     # Run freerdp
     passEntry.delete(0, END)
-    process = subprocess.run(arg)
-    #Error processing freerdp:
+    process = subprocess.run(arg, stdout=subprocess.PIPE)
+    # Error processing freerdp:
     print(process.returncode)
     code = process.returncode
+    for i in process.stdout.decode("utf-8").split("\n"):
+        logging(i)
     if code == 0 or code == 13 or code == 1 or code == 2 or code == 12:
         True
     elif code == 131 or code == 132:
@@ -129,6 +164,7 @@ def RunFreerdp(server):
         messagebox.showerror("Ошибка", "Ошибка = {}".format(freerdperrors[code]))
     else:
         messagebox.showerror("Ошибка", "Код ошибки = {}".format(code))
+
 
 def adminMenu():
     if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
@@ -143,13 +179,20 @@ def adminMenu():
         messagebox.showerror("Ошибка", "Неверный пароль")
         AdmPassword.delete(0, END)
 
+
 def reboot():
     os.system('sudo systemctl reboot')
+
 
 def poweroff():
     os.system('sudo systemctl poweroff')
 
-#Window
+
+# Create device file if not exist
+if not os.path.isfile(devicefile):
+    open(devicefile).close()
+
+# Window
 root = Tk()
 root.attributes('-fullscreen', True)
 
@@ -159,7 +202,7 @@ f_center.place(relx=.5, rely=.5, anchor="c")
 login = StringVar()
 password = StringVar()
 
-#add imagelogo
+# add imagelogo
 if os.path.isfile(imagepath):
     img = Image.open(imagepath)
     img = img.resize((500, 100), Image.ANTIALIAS)
@@ -173,29 +216,29 @@ passLabel = Label(f_center, text="Пароль: ")
 loginLabel.grid(row=1, column=1, sticky="e")
 passLabel.grid(row=2, column=1, sticky="e")
 loginEntry = Entry(f_center, textvariable=login)
-loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N+S+W+E)
+loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N + S + W + E)
 loginEntry.focus()
 passEntry = Entry(f_center, textvariable=password, show="*")
-passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N+S+W+E)
+passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N + S + W + E)
 BtnConnect = Button(f_center, text="Подключиться", command=ConnectButton)
-BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N+S+W+E)
+BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N + S + W + E)
 root.bind('<Return>', ConnectButton)
 
 f_lf = Frame(root)
 f_lf.place(relx=0.1, rely=0.9, anchor="c")
 rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
-rebootBtn.grid(row=0, column=0, sticky=N+S+W+E)
+rebootBtn.grid(row=0, column=0, sticky=N + S + W + E)
 poweroffBtn = Button(f_lf, text="Выключение", command=poweroff)
-poweroffBtn.grid(row=1, column=0, sticky=N+S+W+E)
-#Adminmenu
+poweroffBtn.grid(row=1, column=0, sticky=N + S + W + E)
+# Adminmenu
 adminpass = StringVar()
 
 f_admin = Frame(root)
 f_admin.place(relx=0.9, rely=0.9, anchor="c")
 AdmPassword = Entry(f_admin, textvariable=adminpass, show="*")
-AdmPassword.grid(row=0, column=0, sticky=N+S+W+E)
+AdmPassword.grid(row=0, column=0, sticky=N + S + W + E)
 AdmPassword.config(background="#F0F0F0")
 AdmButton = Button(f_admin, text="Admin", command=adminMenu)
-AdmButton.grid(row=1, column=0, sticky=N+S+W+E)
+AdmButton.grid(row=1, column=0, sticky=N + S + W + E)
 
 root.mainloop()
