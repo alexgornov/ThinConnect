@@ -1,10 +1,13 @@
 from tkinter import *
 import subprocess
-devfile = "dev"
+from pathlib import Path
+devfile = str(Path.home()) + "/dev"
 
 root = Tk()
+
 devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")[0:-1]
 dic = {a: 0 for a in devices}
+
 
 def query_checkbuttons():
     str = ''
@@ -16,6 +19,7 @@ def query_checkbuttons():
     f.write(str)
     f.close()
 
+
 for key in dic:
     dic[key] = IntVar()
     aCheckButton = Checkbutton(root, text=key, variable=dic[key])
@@ -23,4 +27,5 @@ for key in dic:
 
 submitButton = Button(root, text="Submit", command=query_checkbuttons)
 submitButton.grid()
+root.resizable(0,0)
 root.mainloop()

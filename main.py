@@ -18,11 +18,12 @@ import getpass
 import os
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
+from pathlib import Path
 
 # Put image file name here
 imagepath = "confi.png"
 logfile = "connect.log"
-devicefile = "devices"
+devicefile = str(Path.home()) + "/dev"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"  # sha256 hash pass
 freerdperrors = {
     # section 0-15: protocol-independent codes
@@ -79,7 +80,7 @@ def logging(info):
 
 # Check connect device in list
 def getdevicesforredirect():
-    f = open('devices', 'r')
+    f = open(devicefile, 'r')
     devfile = f.read().split('\n')
     devlist = []
     devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")
