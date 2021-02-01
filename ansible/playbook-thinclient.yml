@@ -121,6 +121,17 @@
 #      mode: "u=rw,g=rw,o=r"
       path: /home/{{ user_login }}/.config/lxsession/Lubuntu/autostart
       line: "lxterminal --working-directory={{ path }} -e python3 main.py"
+  - name: Create running script on desktop
+    blockinfile:
+      path: /home/{{ user_login }}/'Рабочий стол'/run.sh
+      create: yes
+      owner: "{{ user_login }}"
+      group: "{{ user_login }}"
+      mode: "u=xrw,g=xrw,o=xr"
+      block: "|
+         #!/bin/bash
+        cd {{ path }}
+        python3 main.py"
 
   - name: Remove autorun usb
     blockinfile:
