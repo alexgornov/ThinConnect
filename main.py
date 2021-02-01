@@ -70,15 +70,19 @@ with open("config.yml", "r") as ymlfile:
 username = getpass.getuser()
 hostname = socket.gethostname()
 
+def rundevicemenu():
+    subprocess.run(['python3', 'devices.py', devicefile])
+
 
 def clearlog():
     f = open(logfile, 'w').close()
 
+
 def logging(info):
     f = open(logfile, 'a')
-    #print("["+str(datetime.now())+"] " + info)
     f.write("["+str(datetime.now())+"] " + info + "\n")
     f.close()
+
 
 # Check connect device in list
 def getdevicesforredirect():
@@ -88,14 +92,13 @@ def getdevicesforredirect():
     devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")
     for i in devices:
         devlist.append(i[23:32])
-    # return devlist
     for i in devfile:
         if i not in devlist:
             devfile.remove(i)
     return devfile
 
 
-def TestConnection(host, port):
+def testconnection(host, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(0.01)
     try:
@@ -106,7 +109,7 @@ def TestConnection(host, port):
         return True
 
 
-def ConnectButton(*args):
+def connectbutton(*args):
     # Check input
     chars = set('~`!@#$%^&*()\'+| \\|/,;\"')
     if login.get() == "":
@@ -121,8 +124,8 @@ def ConnectButton(*args):
         messagebox.showerror("Ошибка", "Пароль не может быть пустым")
         return
     for i in (cfg["servers"]):
-        if TestConnection((cfg["servers"][i]["ip"]), 3389):
-            RunFreerdp(i)
+        if testconnection((cfg["servers"][i]["ip"]), 3389):
+            runfreerdp(i)
             break
     else:
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
@@ -142,7 +145,7 @@ def createrdpargs(server):
         for i in (cfg["servers"][server]["extendedconfig"]):
             arg.append(i)
     devices = getdevicesforredirect()
-    if devices:
+    if devices != ['']:
         for i in getdevicesforredirect():
             arg.append("/usb:id,dev:" + i)
     logging(' '.join(map(str, arg)))
@@ -152,7 +155,7 @@ def createrdpargs(server):
     return arg
 
 
-def RunFreerdp(server):
+def runfreerdp(server):
     # Run freerdp
     process = subprocess.run(createrdpargs(server), stdout=subprocess.PIPE)
     passEntry.delete(0, END)
@@ -172,7 +175,7 @@ def RunFreerdp(server):
         messagebox.showerror("Ошибка", "Код ошибки = {}".format(code))
 
 
-def adminMenu():
+def adminmenu():
     if pbkdf2_sha256.verify(adminpass.get(), adminpass_hash):
         AdmPassword.delete(0, END)
         f_menu = Frame(root)
@@ -196,7 +199,7 @@ def poweroff():
 
 # Create device file if not exist
 if not os.path.isfile(devicefile):
-    open(devicefile,'w').close()
+    open(devicefile, 'w').close()
 clearlog()
 # Window
 root = Tk()
@@ -226,21 +229,21 @@ loginEntry.grid(row=1, column=2, padx=5, pady=5, sticky=N + S + W + E)
 loginEntry.focus()
 passEntry = Entry(f_center, textvariable=password, show="*")
 passEntry.grid(row=2, column=2, padx=5, pady=5, sticky=N + S + W + E)
-BtnConnect = Button(f_center, text="Подключиться", command=ConnectButton)
+BtnConnect = Button(f_center, text="Подключиться", command=connectbutton)
 BtnConnect.grid(row=3, column=2, padx=5, pady=5, sticky=N + S + W + E)
-root.bind('<Return>', ConnectButton)
+root.bind('<Return>', connectbutton)
 
 f_lf = Frame(root)
 f_lf.place(relx=0.1, rely=0.9, anchor="c")
 hostnameLabel = Label(f_lf, text="Имя компьютера: " + hostname)
 hostnameLabel.grid(row=0, column=0, sticky=N + S + W + E)
-devmenuBtn = Button(f_lf, text="Устройства")
+devmenuBtn = Button(f_lf, text="Устройства", command=rundevicemenu)
 devmenuBtn.grid(row=1, column=0, sticky=N + S + W + E)
 rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
 rebootBtn.grid(row=2, column=0, sticky=N + S + W + E)
 poweroffBtn = Button(f_lf, text="Выключение", command=poweroff)
 poweroffBtn.grid(row=3, column=0, sticky=N + S + W + E)
-# Adminmenu
+# Admin menu
 adminpass = StringVar()
 
 f_admin = Frame(root)
@@ -248,7 +251,7 @@ f_admin.place(relx=0.9, rely=0.9, anchor="c")
 AdmPassword = Entry(f_admin, textvariable=adminpass, show="*")
 AdmPassword.grid(row=0, column=0, sticky=N + S + W + E)
 AdmPassword.config(background="#F0F0F0")
-AdmButton = Button(f_admin, text="Admin", command=adminMenu)
+AdmButton = Button(f_admin, text="Admin", command=adminmenu)
 AdmButton.grid(row=1, column=0, sticky=N + S + W + E)
 
 root.mainloop()

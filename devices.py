@@ -1,7 +1,8 @@
 from tkinter import *
 import subprocess
-from pathlib import Path
-devfile = str(Path.home()) + "/dev"
+import sys
+
+devfile = sys.argv[1]
 
 root = Tk()
 
@@ -18,6 +19,7 @@ def query_checkbuttons():
     f = open(devfile, "w")
     f.write(str)
     f.close()
+    root.destroy()
 
 
 for key in dic:
@@ -25,7 +27,7 @@ for key in dic:
     aCheckButton = Checkbutton(root, text=key, variable=dic[key])
     aCheckButton.grid(sticky='w')
 
-submitButton = Button(root, text="Submit", command=query_checkbuttons)
+submitButton = Button(root, text="Сохранить", command=query_checkbuttons)
 submitButton.grid()
-root.resizable(0,0)
+root.resizable(0, 0)
 root.mainloop()
