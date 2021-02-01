@@ -22,7 +22,7 @@ from pathlib import Path
 
 # Put image file name here
 imagepath = "confi.png"
-logfile = "connect.log"
+logfile = str(Path.home()) + "/connect.log"
 devicefile = str(Path.home()) + "/dev"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"  # sha256 hash pass
 freerdperrors = {
@@ -151,12 +151,13 @@ def RunFreerdp(server):
     messagebox.showinfo("test", arg)
     # Run freerdp
     passEntry.delete(0, END)
-    process = subprocess.run(arg, stdout=subprocess.PIPE)
+    process = subprocess.run(arg, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     # Error processing freerdp:
     print(process.returncode)
     code = process.returncode
     for i in process.stdout.decode("utf-8").split("\n"):
         logging(i)
+
     if code == 0 or code == 13 or code == 1 or code == 2 or code == 12:
         True
     elif code == 131 or code == 132:
@@ -191,7 +192,7 @@ def poweroff():
 
 # Create device file if not exist
 if not os.path.isfile(devicefile):
-    open(devicefile).close()
+    open(devicefile,'w').close()
 
 # Window
 root = Tk()

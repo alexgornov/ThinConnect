@@ -1,5 +1,5 @@
 [thinclients]
 #one ansible_host=192.168.15.205
-#two ansible_host=192.168.15.153
-vm ansible_host=192.168.88.187
+two ansible_host=192.168.15.153
+#vm ansible_host=192.168.88.187
 [news]
