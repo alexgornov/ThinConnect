@@ -24,7 +24,8 @@ from pathlib import Path
 imagepath = "confi.png"
 logfile = str(Path.home()) + "/connect.log"
 devicefile = str(Path.home()) + "/dev"
-adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"  # sha256 hash pass
+# sha256 hash pass
+adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"
 freerdperrors = {
     # section 0-15: protocol-independent codes
     0: '0 XF_EXIT_SUCCESS',
@@ -69,6 +70,7 @@ with open("config.yml", "r") as ymlfile:
 # Get username for USB Mount
 username = getpass.getuser()
 hostname = socket.gethostname()
+
 
 def rundevicemenu():
     subprocess.run(['python3', 'devices.py', devicefile])
@@ -157,10 +159,9 @@ def createrdpargs(server):
 
 def runfreerdp(server):
     # Run freerdp
-    process = subprocess.run(createrdpargs(server), stdout=subprocess.PIPE)
+    process = subprocess.run(createrdpargs(server), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     passEntry.delete(0, END)
     # Error processing freerdp:
-    print(process.returncode)
     code = process.returncode
     for i in process.stdout.decode("utf-8").split("\n"):
         logging(i)
@@ -170,9 +171,9 @@ def runfreerdp(server):
     elif code == 131 or code == 132:
         messagebox.showerror("Повторите подключение", "Ошибка логина-пароля")
     elif code in freerdperrors:
-        messagebox.showerror("Ошибка", "Ошибка = {}".format(freerdperrors[code]))
+        messagebox.showerror("Ошибка", "Ошибка = {}".format(freerdperrors[code]) + '\nПовторите подключение')
     else:
-        messagebox.showerror("Ошибка", "Код ошибки = {}".format(code))
+        messagebox.showerror("Ошибка", "Код ошибки = {}".format(code) + '\nПовторите подключение')
 
 
 def adminmenu():
@@ -180,10 +181,10 @@ def adminmenu():
         AdmPassword.delete(0, END)
         f_menu = Frame(root)
         f_menu.place(relx=.5, rely=.8, anchor="c")
-        BtnExit = Button(f_menu, text="Выход", command=exit)
-        BtnExit.grid(row=0, column=0, padx=5, pady=5, sticky=N + S + W + E)
-        BtnClose = Button(f_menu, text="Закрыть меню", command=f_menu.destroy)
-        BtnClose.grid(row=1, column=0, padx=5, pady=5, sticky=N + S + W + E)
+        btnexit = Button(f_menu, text="Выход", command=exit)
+        btnexit.grid(row=0, column=0, padx=5, pady=5, sticky=N + S + W + E)
+        btnclose = Button(f_menu, text="Закрыть меню", command=f_menu.destroy)
+        btnclose.grid(row=1, column=0, padx=5, pady=5, sticky=N + S + W + E)
     else:
         messagebox.showerror("Ошибка", "Неверный пароль")
         AdmPassword.delete(0, END)

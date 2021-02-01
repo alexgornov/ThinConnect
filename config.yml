@@ -1,7 +1,8 @@
 domain: confi.ru
-config: {"/cert-ignore", "/multimon", "/usb:auto", "/microphone:sys:alsa", "/sound:sys:alsa"}
+config: {"/cert-ignore", "/multimon", "/microphone:sys:alsa", "/sound:sys:alsa"}
 servers:
   server1:
     name: srv-farm
     ip: 192.168.0.167
     extendedconfig: {"/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP", "/f"}
+# "/usb:auto",
