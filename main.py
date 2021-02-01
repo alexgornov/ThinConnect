@@ -18,11 +18,12 @@ import getpass
 import os
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime
+from pathlib import Path
 
 # Put image file name here
 imagepath = "confi.png"
-logfile = "connect.log"
-devicefile = "devices"
+logfile = str(Path.home()) + "/connect.log"
+devicefile = str(Path.home()) + "/dev"
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"  # sha256 hash pass
 freerdperrors = {
     # section 0-15: protocol-independent codes
@@ -81,7 +82,7 @@ def logging(info):
 
 # Check connect device in list
 def getdevicesforredirect():
-    f = open('devices', 'r')
+    f = open(devicefile, 'r')
     devfile = f.read().split('\n')
     devlist = []
     devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")
@@ -160,6 +161,7 @@ def RunFreerdp(server):
     code = process.returncode
     for i in process.stdout.decode("utf-8").split("\n"):
         logging(i)
+
     if code == 0 or code == 13 or code == 1 or code == 2 or code == 12:
         True
     elif code == 131 or code == 132:
@@ -191,33 +193,10 @@ def reboot():
 def poweroff():
     os.system('sudo systemctl poweroff')
 
-# NOT WORKS:
-def opendevicemenu():
-    devicemenu = Toplevel(root)
-    #devicemenu.place(relx=.5, rely=.8, anchor="c")
-    devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")[0:-1]
-    dic = {a: 0 for a in devices}
-    print(dic)
-    for key in dic:
-        print(dic[key])
-        dic[key] = IntVar()
-        print(dic[key])
-        aCheckButton = Checkbutton(devicemenu, text=key, variable=dic[key])
-        aCheckButton.grid(sticky='w')
-    print(dic)
-    writeBtn = Button(devicemenu, text="Сохранить", command=writedevices(dic))
-    writeBtn.grid(sticky='w')
-
-def writedevices(dic):
-    print(dic)
-    for key, value in dic.items():
-        if value.get() != 0:
-            print(key)
-
 
 # Create device file if not exist
 if not os.path.isfile(devicefile):
-    open(devicefile).close()
+    open(devicefile,'w').close()
 clearlog()
 # Window
 root = Tk()
@@ -255,7 +234,7 @@ f_lf = Frame(root)
 f_lf.place(relx=0.1, rely=0.9, anchor="c")
 hostnameLabel = Label(f_lf, text="Имя компьютера: " + hostname)
 hostnameLabel.grid(row=0, column=0, sticky=N + S + W + E)
-devmenuBtn = Button(f_lf, text="Устройства", command=opendevicemenu)
+devmenuBtn = Button(f_lf, text="Устройства")
 devmenuBtn.grid(row=1, column=0, sticky=N + S + W + E)
 rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
 rebootBtn.grid(row=2, column=0, sticky=N + S + W + E)

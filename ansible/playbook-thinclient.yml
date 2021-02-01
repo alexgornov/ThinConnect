@@ -111,6 +111,7 @@
       - main.py
       - config.yml
       - confi.png
+      - devices.py
 
   - name: Add main.py to startup
     lineinfile:

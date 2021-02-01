@@ -1,0 +1,22 @@
+---
+- name: Upgrade thinclient files
+  hosts: thinclients
+  vars:
+    admin_login: saadm
+    path: /opt/conficonnect/
+    srcpath: /home/mrsnuff/PycharmProjects/ConfiConnect/
+  tasks:
+  - name: Copy script and config to host
+    copy:
+      src: "{{ srcpath }}{{ item }}"
+      dest: "{{ path }}"
+      owner: "{{ admin_login }}"
+      mode: 644
+    loop:
+      - main.py
+      - config.yml
+      - confi.png
+      - devices.py
+  - name: Reboot
+    reboot:
+      pre_reboot_delay: 5
