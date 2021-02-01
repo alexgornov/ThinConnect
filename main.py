@@ -67,6 +67,8 @@ with open("config.yml", "r") as ymlfile:
 
 # Get username for USB Mount
 username = getpass.getuser()
+hostname = socket.gethostname()
+
 
 def clearlog():
     f = open(logfile, 'w').close()
@@ -125,19 +127,16 @@ def ConnectButton(*args):
         messagebox.showinfo("Ошибка", "Нет доступа к серверу")
 
 
-def RunFreerdp(server):
+def createrdpargs(server):
     arg = ["xfreerdp",
            "/v:" + (cfg["servers"][server]["ip"]),
            "/d:" + (cfg["domain"]),
-           "/u:" + login.get(),
-           "/p:" + password.get()
+           "/u:" + login.get()
            ]
     if os.path.isdir("/media/" + username):
         arg.append("/drive:USB,/media/" + username)
-
     for i in (cfg["config"]):
         arg.append(i)
-
     if (cfg["servers"][server]["extendedconfig"]) != "":
         for i in (cfg["servers"][server]["extendedconfig"]):
             arg.append(i)
@@ -145,12 +144,17 @@ def RunFreerdp(server):
     if devices:
         for i in getdevicesforredirect():
             arg.append("/usb:id,dev:" + i)
+    logging(' '.join(map(str, arg)))
+    arg.append("/p:" + password.get())
     # For debug:
-    # print(arg)
-    messagebox.showinfo("test", arg)
+    # messagebox.showinfo("test", arg)
+    return arg
+
+
+def RunFreerdp(server):
     # Run freerdp
+    process = subprocess.run(createrdpargs(server), stdout=subprocess.PIPE)
     passEntry.delete(0, END)
-    process = subprocess.run(arg, stdout=subprocess.PIPE)
     # Error processing freerdp:
     print(process.returncode)
     code = process.returncode
@@ -187,11 +191,34 @@ def reboot():
 def poweroff():
     os.system('sudo systemctl poweroff')
 
+# NOT WORKS:
+def opendevicemenu():
+    devicemenu = Toplevel(root)
+    #devicemenu.place(relx=.5, rely=.8, anchor="c")
+    devices = subprocess.run("lsusb", stdout=subprocess.PIPE).stdout.decode("utf-8").split("\n")[0:-1]
+    dic = {a: 0 for a in devices}
+    print(dic)
+    for key in dic:
+        print(dic[key])
+        dic[key] = IntVar()
+        print(dic[key])
+        aCheckButton = Checkbutton(devicemenu, text=key, variable=dic[key])
+        aCheckButton.grid(sticky='w')
+    print(dic)
+    writeBtn = Button(devicemenu, text="Сохранить", command=writedevices(dic))
+    writeBtn.grid(sticky='w')
+
+def writedevices(dic):
+    print(dic)
+    for key, value in dic.items():
+        if value.get() != 0:
+            print(key)
+
 
 # Create device file if not exist
 if not os.path.isfile(devicefile):
     open(devicefile).close()
-
+clearlog()
 # Window
 root = Tk()
 root.attributes('-fullscreen', True)
@@ -226,10 +253,14 @@ root.bind('<Return>', ConnectButton)
 
 f_lf = Frame(root)
 f_lf.place(relx=0.1, rely=0.9, anchor="c")
+hostnameLabel = Label(f_lf, text="Имя компьютера: " + hostname)
+hostnameLabel.grid(row=0, column=0, sticky=N + S + W + E)
+devmenuBtn = Button(f_lf, text="Устройства", command=opendevicemenu)
+devmenuBtn.grid(row=1, column=0, sticky=N + S + W + E)
 rebootBtn = Button(f_lf, text="Перезагрузка", command=reboot)
-rebootBtn.grid(row=0, column=0, sticky=N + S + W + E)
+rebootBtn.grid(row=2, column=0, sticky=N + S + W + E)
 poweroffBtn = Button(f_lf, text="Выключение", command=poweroff)
-poweroffBtn.grid(row=1, column=0, sticky=N + S + W + E)
+poweroffBtn.grid(row=3, column=0, sticky=N + S + W + E)
 # Adminmenu
 adminpass = StringVar()
 
