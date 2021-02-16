@@ -22,8 +22,13 @@ from pathlib import Path
 
 # Put image file name here
 imagepath = "confi.png"
-logfile = str(Path.home()) + "/connect.log"
-devicefile = str(Path.home()) + "/dev"
+
+if not os.path.exists(str(Path.home()) + "/conficonnect"):
+    os.mkdir(str(Path.home()) + "/conficonnect")
+path = str(Path.home()) + "/conficonnect"
+
+logfile = path + "/connect.log"
+devicefile = path + "/dev"
 # sha256 hash pass
 adminpass_hash = "$pbkdf2-sha256$29000$SckZQ8h5z9mbsxYCwDgHAA$ZM8GlKHnTFKHaWn3/.YjlvQKep7/xnoeIC.4JZ55Nc0"
 freerdperrors = {
@@ -75,6 +80,8 @@ hostname = socket.gethostname()
 def rundevicemenu():
     subprocess.run(['python3', 'devices.py', devicefile])
 
+def runprintermenu():
+    subprocess.run(['python3', 'printers.py', printerfile])
 
 def clearlog():
     f = open(logfile, 'w').close()
@@ -98,6 +105,7 @@ def getdevicesforredirect():
         if i not in devlist:
             devfile.remove(i)
     return devfile
+
 
 
 def testconnection(host, port):
@@ -150,6 +158,8 @@ def createrdpargs(server):
     if devices != ['']:
         for i in getdevicesforredirect():
             arg.append("/usb:id,dev:" + i)
+    #For debug
+    #arg.append("/log-level:DEBUG")
     logging(' '.join(map(str, arg)))
     arg.append("/p:" + password.get())
     # For debug:
