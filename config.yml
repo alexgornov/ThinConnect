@@ -1,7 +1,7 @@
-domain: confi.ru
+domain: example.com
 config: {"/cert-ignore", "/usb:auto", "/multimon", "/audio-mode:0","/microphone:sys:alsa,format:1,rate:44100", "/sound:sys:alsa", "/printer"}
 servers:
   server1:
-    name: srv-farm
+    name: example
     ip: 192.168.0.167
     extendedconfig: { "/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP", "/f" }
