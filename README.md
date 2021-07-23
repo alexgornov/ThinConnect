@@ -1,17 +1,15 @@
-# ConfiConnect
-
-Need freerdp2-x11, python3-tk
+# ThinConnect
 
 Create a config.yml file with content:
 
 ```
 domain: "example.com"
-config: "global config for freerdp" # "{/cert-ignore, /multimon}" and more
+config: {"/cert-ignore", "/usb:auto", "/multimon", "/audio-mode:0","/microphone:sys:alsa,format:1,rate:44100", "/sound:sys:alsa", "/printer"} #global config for freerdp
 servers:
   server1:
     name: "servername"
     ip: serverip
-    extendedconfig: "extended config for freerdp" # "{/load-balance-info}" and more
+    extendedconfig: { "/load-balance-info:tsv://MS\ Terminal\ Services\ Plugin.1.RDP", "/f" } # extended config for freerdp
   server(i):
     ...
     
